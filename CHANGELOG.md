@@ -4,7 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- Planned features and improvements.
+### Added
+
+- Implemented secure authentication system with JWT token management
+- Created responsive login and signup forms with validation
+- Added protected route middleware for authenticated pages
+- Integrated error boundary for better error handling
+
+### Changed
+
+- Enhanced UI components with modern design patterns
+- Improved form validation feedback
+- Optimized authentication flow for better user experience
+
+### Fixed
+
+- Resolved token persistence issues in authentication flow
+- Fixed form validation edge cases
 
 ## [1.0.1] - 2025-03-22
 

@@ -5,14 +5,18 @@ import cors from "cors";
 import mongoSanitize from "express-mongo-sanitize";
 import fileUpload from "express-fileupload";
 import { rateLimit } from "express-rate-limit";
-import { connectWithRetry } from "./config/dbConfig.js";
+import dotenv from "dotenv";
+import { connectDB } from "./config/dbConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
+// Load environment variables
+dotenv.config();
+
 const app = express();
 
-// Connect to MongoDB with retry mechanism
-connectWithRetry().catch(err => {
+// Connect to MongoDB
+connectDB().catch(err => {
   console.error("Failed to connect to MongoDB:", err);
   process.exit(1);
 });

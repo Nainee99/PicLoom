@@ -10,7 +10,14 @@ const connectDB = async () => {
       throw new Error("Invalid MongoDB connection string");
     }
 
-    const conn = await mongoose.connect(MONGODB_URI);
+    const conn = await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+      socketTimeoutMS: 45000, // Increase socket timeout
+      connectTimeoutMS: 30000, // Increase connection timeout
+      maxPoolSize: 10, // Optimize connection pool
+      minPoolSize: 2,
+      retryWrites: true
+    });
 
     // Log success in development environment
     if (process.env.NODE_ENV === "development") {

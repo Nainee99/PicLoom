@@ -8,6 +8,7 @@ export const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // Enable sending cookies with requests
 });
 
 // Track if we're currently refreshing the token
@@ -26,22 +27,6 @@ const processQueue = (error, token = null) => {
   failedQueue = [];
 };
 
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("auth-storage");
-    if (token) {
-      const parsedToken = JSON.parse(token)?.state?.user?.token;
-      if (parsedToken) {
-        config.headers.Authorization = `Bearer ${parsedToken}`;
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -52,8 +37,7 @@ apiClient.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
+          .then(() => {
             return apiClient(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -63,27 +47,12 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await apiClient.post("/auth/refresh-token");
-        const { token } = response.data;
-
-        // Update token in localStorage
-        const authStorage = JSON.parse(localStorage.getItem("auth-storage"));
-        authStorage.state.user.token = token;
-        localStorage.setItem("auth-storage", JSON.stringify(authStorage));
-
-        // Update Authorization header
-        apiClient.defaults.headers.common.Authorization = `Bearer ${token}`;
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-
-        // Process pending requests
-        processQueue(null, token);
-
+        await apiClient.post("/auth/refresh-token");
+        processQueue(null);
         return apiClient(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
         // Clear auth data and redirect to login
-        localStorage.removeItem("auth-storage");
-        localStorage.removeItem("user-storage");
         window.location.href = "/auth/login";
         return Promise.reject(refreshError);
       } finally {

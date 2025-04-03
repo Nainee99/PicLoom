@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2025-04-03
+
+### Added
+
+- Implemented Pin creation landing page with modern UI
+- Created comprehensive Pin creation form with image upload
+- Developed Pin editor page with image editing capabilities
+- Implemented tag management system with controllers and routes
+- Enhanced user model with cover image support
+
 ## [Unreleased]
 
 ### Added
@@ -10,6 +20,15 @@ All notable changes to this project will be documented in this file.
 - Created responsive login and signup forms with validation
 - Added protected route middleware for authenticated pages
 - Integrated error boundary for better error handling
+- Created Home and Today pages with responsive layouts
+- Set up color scheme and implemented light/dark theme toggle
+
+## [1.0.2] - 2025-03-23
+
+### Added
+
+- Created Home and Today pages with responsive layouts
+- Set up color scheme and implemented light/dark theme toggle
 
 ### Changed
 

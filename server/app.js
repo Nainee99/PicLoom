@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/dbConfig.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import tagRoutes from "./routes/tagRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -16,7 +17,7 @@ dotenv.config();
 const app = express();
 
 // Connect to MongoDB
-connectDB().catch(err => {
+connectDB().catch((err) => {
   console.error("Failed to connect to MongoDB:", err);
   process.exit(1);
 });
@@ -28,29 +29,34 @@ app.use(cookieParser());
 app.use(morgan(process.env.NODE_ENV === "development" ? "dev" : "combined"));
 
 // Security middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(mongoSanitize());
 
 // File upload middleware
-app.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: "/tmp/",
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
-}));
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use("/api", limiter);
 
 // Mount routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/tags", tagRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -59,8 +65,8 @@ app.use((err, req, res, next) => {
     success: false,
     error: {
       message: err.message || "Internal server error",
-      ...(process.env.NODE_ENV === "development" && { stack: err.stack })
-    }
+      ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    },
   });
 });
 

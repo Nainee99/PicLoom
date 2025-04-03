@@ -27,7 +27,7 @@ export const getUserProfile = async (req, res) => {
 // Update user profile
 export const updateUserProfile = async (req, res) => {
   try {
-    const { name, bio, website, avatar } = req.body;
+    const { name, bio, website, avatar, coverImage } = req.body;
     const userId = req.user.userId;
 
     const user = await User.findById(userId);
@@ -40,6 +40,7 @@ export const updateUserProfile = async (req, res) => {
     if (bio) user.bio = bio;
     if (website) user.website = website;
     if (avatar) user.avatar = avatar;
+    if (coverImage) user.coverImage = coverImage;
 
     await user.save();
 
